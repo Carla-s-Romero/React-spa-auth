@@ -1,6 +1,6 @@
 import { Author } from "../Author"
 import styles from './cardpost.module.css'
-
+import { Link } from "react-router-dom"
 import { ThumbsUpButton } from "./ThumbsUpButton"
 import { IconChat } from "../icons/IconChat"
 import { IconButton } from "../IconButton"
@@ -19,7 +19,9 @@ export const CardPost = ({ post }) => {
             <section className={styles.body}>
                 <h2>{post.title}</h2>
                 <p>{post.body}</p>
-                <a href="#">Ver detalhes</a>
+                <Link to="blog-post">
+                    Ver detalhes
+                </Link>
             </section>
             <footer className={styles.footer}>
                 <div className={styles.actions}>
