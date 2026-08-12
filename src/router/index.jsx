@@ -5,31 +5,32 @@ import { Register } from '../pages/Register/index.jsx'
 import { Feed } from '../pages/Feed/index.jsx'
 import { BlogPost } from '../pages/BlogPost/index.jsx'
 import { ProtectedRoute } from '../components/ProtectedRoute/index.jsx'
+import { AuthLayout } from '../layouts/Auth/index.jsx'
+import { AppLayout } from '../layouts/App/index.jsx'
 
 export const AppRouter = () => {
     return (
-          <BrowserRouter>
-      <Routes>
-          < Route path="/" >
-            < Route path="" element={
-              <ProtectedRoute>
-                <Feed />
-              </ProtectedRoute>
-              } />
-            < Route path="blog-post/:slug" element={
-              <ProtectedRoute>
-                <BlogPost />
-              </ProtectedRoute>
-            } />
+        <BrowserRouter>
+            <Routes>
+                <Route element={<AppLayout />}>
+                    <Route path="/" element={
+                        <ProtectedRoute>
+                            <Feed />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="blog-post/:slug" element={
+                        <ProtectedRoute>
+                            <BlogPost />
+                        </ProtectedRoute>
+                    } />
+                </Route>
 
-          </Route>
-
-          < Route path="/auth">
-                < Route path="login" element={<Login />} />
-                < Route path="register" element={<Register />} />
-          </Route>
-      </Routes>
-    </BrowserRouter>
+                <Route path="/auth" element={<AuthLayout />}>
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
     )
 
 }
