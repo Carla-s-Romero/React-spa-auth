@@ -26,7 +26,7 @@ export const Aside = () => {
                     </Button>
                 </li>
                 <li>
-                    <AsideLink href="#">
+                    <AsideLink href="/">
                         <IconFeed />
                         Feed
                     </AsideLink>
