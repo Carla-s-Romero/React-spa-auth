@@ -7,6 +7,7 @@ import { BlogPost } from '../pages/BlogPost/index.jsx'
 import { ProtectedRoute } from '../components/ProtectedRoute/index.jsx'
 import { AuthLayout } from '../layouts/Auth/index.jsx'
 import { AppLayout } from '../layouts/App/index.jsx'
+import { NotFound } from '../pages/NotFound/index.jsx'
 
 export const AppRouter = () => {
     return (
@@ -24,11 +25,11 @@ export const AppRouter = () => {
                         </ProtectedRoute>
                     } />
                 </Route>
-
                 <Route path="/auth" element={<AuthLayout />}>
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
                 </Route>
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     )
