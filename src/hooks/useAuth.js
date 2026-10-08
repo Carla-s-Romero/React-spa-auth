@@ -1,76 +1,66 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
+import { apiHttp } from "../api";
 
 export const useAuth = () => {
-  const [user, setUser] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('auth_user')
+    const storedUser = localStorage.getItem("auth_user");
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser))
+        setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error('Erro ao carregar usuário do localStorage:', error)
-        localStorage.removeItem('auth_user')
+        console.error("Erro ao carregar usuário do localStorage:", error);
+        localStorage.removeItem("auth_user");
       }
     }
-    setIsLoading(false)
-  }, [])
+    setIsLoading(false);
+  }, []);
 
   const register = async (name, email, password) => {
     try {
-      const response = await fetch('http://localhost:3000/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
-      })
+      await apiHttp.post("auth/register", {
+        name,
+        email,
+        password,
+      });
 
-      if (!response.ok) {
-        throw new Error('Erro ao registrar usuário')
-      }
-
-      return { success: true }
+      return { success: true };
     } catch (error) {
-      return { success: false, error: error.message }
+      return { success: false, error: error.message };
     }
-  }
+  };
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      })
+      const response = await apiHttp.post("auth/login", {
+        email,
+        password,
+      });
 
-      if(!response.ok) {
-        throw new Error('Erro ao realizar Login')
-      }
-      
-      const data = await response.json()
+      const data = response.data;
 
-      setUser(data.user)
-      localStorage.setItem('auth_user', JSON.stringify(data.user))
-      localStorage.setItem('access_token', data.access_token)
+      setUser(data.user);
+      localStorage.setItem("auth_user", JSON.stringify(data.user));
+      localStorage.setItem("access_token", data.access_token);
 
-
-      return { success: true, user }
+      return { success: true, user };
     } catch (error) {
-      return { success: false, error: error.message }
+      if (error.response?.status === 404) {
+        throw new Error("Erro ao realizar Login");
+      }
+      return { success: false, error: error.message };
     }
-  }
+  };
 
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem('auth_user')
-    localStorage.removeItem('access_token')
-  }
+    setUser(null);
+    localStorage.removeItem("auth_user");
+    localStorage.removeItem("access_token");
+  };
 
-  const isAuthenticated = !!user
+  const isAuthenticated = !!user;
 
   return {
     user,
@@ -78,6 +68,6 @@ export const useAuth = () => {
     isAuthenticated,
     register,
     login,
-    logout
-  }
-} 
+    logout,
+  };
+};

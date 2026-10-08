@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ThumbsUpButton } from "./ThumbsUpButton";
 import { DialogComment } from "../DialogComment/index.jsx";
 import { useState } from "react";
+import { apiHttp } from "../../api/index.js";
 
 export const CardPost = ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
@@ -11,18 +12,15 @@ export const CardPost = ({ post }) => {
   const handleLike = () => {
     const accessToken = localStorage.getItem("access_token");
 
-    fetch(`http://localhost:3000/blog-posts/${post.id}/like`, {
-        method: "POST",
+    apiHttp.post(`blog-posts/${post.id}/like`, {}, {
         headers: {
           "Authorization": `Bearer ${accessToken}`
         }
       })
-      .then((response) => {
-        if (response.ok) {
+      .then(() => {
           setLikes((oldState) => oldState + 1);
           console.log(`Post ${post.slug} liked! Total likes: ${likes + 1}`);
-        }
-      })
+        })
   };
 
   return (

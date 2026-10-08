@@ -7,6 +7,7 @@ import { CommentList } from "../../components/CommentList";
 import ReactMarkdown from "react-markdown";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { apiHttp } from "../../api/index.js";
 
 export const BlogPost = () => {
   const { slug } = useParams();
@@ -16,17 +17,14 @@ export const BlogPost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/blog-posts/slug/${slug}`,
-        );
-        if (!response.ok) {
-          navigate("/not-found");
-          return;
-        }
-        const data = await response.json();
-        setPost(data);
+        const response = await apiHttp.get(`blog-posts/slug/${slug}`);
+        setPost(response.data);
       } catch (error) {
         console.error("Erro ao buscar post:", error);
+
+        if (error.response?.status === 404) {
+          navigate("/not-found");
+        }
       }
     };
 
