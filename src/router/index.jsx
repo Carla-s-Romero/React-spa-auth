@@ -7,20 +7,22 @@ import { BlogPost } from "../pages/BlogPost/index.jsx";
 import { AuthLayout } from "../layouts/Auth/index.jsx";
 import { AppLayout } from "../layouts/App/index.jsx";
 import { NotFound } from "../pages/NotFound/index.jsx";
+import { Logout } from "../pages/Logout/index.jsx"
 
 export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Feed />} />
-          <Route path="blog-post/:slug" element={<BlogPost />} />
-        </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path='logout' element={<Logout />} />
         </Route>
-        <Route path="*" element={<NotFound />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Feed />} />
+          <Route path="blog-post/:slug" element={<BlogPost />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
