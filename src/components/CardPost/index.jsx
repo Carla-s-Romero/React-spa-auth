@@ -5,9 +5,16 @@ import { ThumbsUpButton } from "./ThumbsUpButton";
 import { DialogComment } from "../DialogComment/index.jsx";
 import { useState } from "react";
 import { apiHttp } from "../../api/index.js";
+import { useAuth } from "../../hooks/useAuth.js";
 
 export const CardPost = ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
+  const [comments, setComments] = useState(post.comments);
+  const { isAuthenticated } = useAuth();
+
+  const handleCommentSuccess = (newComment) => {
+    setComments([newComment, ...comments]);
+  }
 
   const handleLike = () => {
     const accessToken = localStorage.getItem("access_token");
@@ -38,12 +45,12 @@ export const CardPost = ({ post }) => {
       <footer className={styles.footer}>
         <div className={styles.actions}>
           <div className={styles.action}>
-            <ThumbsUpButton loading={false} onClick={handleLike} />
+            <ThumbsUpButton loading={false} onClick={handleLike} disabled={!isAuthenticated} />
             <p>{likes}</p>
           </div>
           <div className={styles.action}>
-            <DialogComment />
-            <p>{post.comments.length}</p>
+            <DialogComment onSuccess={handleCommentSuccess} postId={post.id} />
+            <p>{comments.length}</p>
           </div>
         </div>
         <Author author={post.author} />

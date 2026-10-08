@@ -13,12 +13,18 @@ export const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
+  const [comments, setComments] = useState([]);
+
+  const handleCommentSuccess = (newComment) => {
+    setComments([newComment, ...comments]);
+  };
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await apiHttp.get(`blog-posts/slug/${slug}`);
         setPost(response.data);
+        setComments(response.data.comments);
       } catch (error) {
         console.error("Erro ao buscar post:", error);
 
@@ -57,8 +63,8 @@ export const BlogPost = () => {
               <p>{post.likes}</p>
             </div>
             <div className={styles.action}>
-              <DialogComment />
-              <p>{post.comments.length}</p>
+              <DialogComment onSuccess={handleCommentSuccess} postId={post.id}/>
+              <p>{comments.length}</p>
             </div>
           </div>
           <Author author={post.author} />
@@ -68,7 +74,7 @@ export const BlogPost = () => {
       <div className={styles.code}>
         <ReactMarkdown>{post.markdown}</ReactMarkdown>
       </div>
-      <CommentList comments={post.comments} />
+      <CommentList comments={comments} />
     </main>
   );
 };
