@@ -8,34 +8,26 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { apiHttp } from "../../api/index.js";
+import { usePostInteractions } from "../../hooks/usePostInteractions.js";
 
 export const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
-  const [comments, setComments] = useState([]);
-
-  const handleCommentSuccess = (newComment) => {
-    setComments([newComment, ...comments]);
-  };
-
-  const handleDeleteComment = (commentId) => {
-    const isConfirmed = confirm(
-      "Tem certeza que deseja excluir este comentário?",
-    );
-    if (isConfirmed) {
-      apiHttp.delete(`comments/${commentId}`).then(() => {
-        setComments(oldState => oldState.filter((c) => c.id !== commentId));
-      });
-    }
-  };
+  const {
+    likes,
+    comments,
+    isAuthenticated,
+    handleNewComment,
+    handleLikeButton,
+    handleDeleteComment,
+  } = usePostInteractions(post);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await apiHttp.get(`blog-posts/slug/${slug}`);
         setPost(response.data);
-        setComments(response.data.comments);
       } catch (error) {
         console.error("Erro ao buscar post:", error);
 
@@ -70,12 +62,16 @@ export const BlogPost = () => {
         <footer className={styles.footer}>
           <div className={styles.actions}>
             <div className={styles.action}>
-              <ThumbsUpButton loading={false} />
-              <p>{post.likes}</p>
+              <ThumbsUpButton
+                loading={false}
+                onClick={() => handleLikeButton(post.id)}
+                disabled={!isAuthenticated}
+              />
+              <p>{likes}</p>
             </div>
             <div className={styles.action}>
               <DialogComment
-                onSuccess={handleCommentSuccess}
+                onSuccess={handleNewComment}
                 postId={post.id}
               />
               <p>{comments.length}</p>

@@ -3,26 +3,16 @@ import styles from "./cardpost.module.css";
 import { Link } from "react-router-dom";
 import { ThumbsUpButton } from "./ThumbsUpButton";
 import { DialogComment } from "../DialogComment/index.jsx";
-import { useState } from "react";
-import { apiHttp } from "../../api/index.js";
-import { useAuth } from "../../hooks/useAuth.js";
+import { usePostInteractions } from "../../hooks/usePostInteractions.js";
 
 export const CardPost = ({ post }) => {
-  const [likes, setLikes] = useState(post.likes);
-  const [comments, setComments] = useState(post.comments);
-  const { isAuthenticated } = useAuth();
-
-  const handleCommentSuccess = (newComment) => {
-    setComments([newComment, ...comments]);
-  }
-
-  const handleLike = () => {
-    apiHttp.post(`blog-posts/${post.id}/like`)
-      .then(() => {
-          setLikes((oldState) => oldState + 1);
-          console.log(`Post ${post.slug} liked! Total likes: ${likes + 1}`);
-        })
-  };
+  const {
+    likes,
+    comments,
+    isAuthenticated,
+    handleNewComment,
+    handleLikeButton,
+  } = usePostInteractions(post);
 
   return (
     <article className={styles.card}>
@@ -39,11 +29,15 @@ export const CardPost = ({ post }) => {
       <footer className={styles.footer}>
         <div className={styles.actions}>
           <div className={styles.action}>
-            <ThumbsUpButton loading={false} onClick={handleLike} disabled={!isAuthenticated} />
+            <ThumbsUpButton
+              loading={false}
+              onClick={() => handleLikeButton(post.id)}
+              disabled={!isAuthenticated}
+            />
             <p>{likes}</p>
           </div>
           <div className={styles.action}>
-            <DialogComment onSuccess={handleCommentSuccess} postId={post.id} />
+            <DialogComment onSuccess={handleNewComment} postId={post.id} />
             <p>{comments.length}</p>
           </div>
         </div>
