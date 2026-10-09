@@ -17,18 +17,13 @@ export const DialogComment = ({ isEditing, onSuccess, postId, commentId, default
   const { isAuthenticated } = useAuth();
 
   const onSubmit = async (formData) => {
-    const token = localStorage.getItem("access_token");
     const text = formData.get("text");
     if (!text.trim()) return;
     try {
       setLoading(true);
       if (isEditing) {
          await apiHttp.patch(
-            `comments/${commentId}`, { text }, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
+            `comments/${commentId}`, { text },
           )
           .then((response) => {
             dialogRef.current.closeModal();
@@ -37,11 +32,7 @@ export const DialogComment = ({ isEditing, onSuccess, postId, commentId, default
           });
       } else {
         await apiHttp.post(
-            `comments/post/${postId}`, { text }, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
+            `comments/post/${postId}`, { text },
           )
           .then((response) => {
             dialogRef.current.closeModal();

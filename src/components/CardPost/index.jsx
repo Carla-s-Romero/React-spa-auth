@@ -17,13 +17,7 @@ export const CardPost = ({ post }) => {
   }
 
   const handleLike = () => {
-    const accessToken = localStorage.getItem("access_token");
-
-    apiHttp.post(`blog-posts/${post.id}/like`, {}, {
-        headers: {
-          "Authorization": `Bearer ${accessToken}`
-        }
-      })
+    apiHttp.post(`blog-posts/${post.id}/like`)
       .then(() => {
           setLikes((oldState) => oldState + 1);
           console.log(`Post ${post.slug} liked! Total likes: ${likes + 1}`);
