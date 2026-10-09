@@ -3,8 +3,9 @@ import { Avatar } from "../Avatar";
 import { DialogComment } from "../DialogComment";
 import { useAuth } from "../../hooks/useAuth";
 import { useState } from "react";
+import { IconButton } from "../IconButton";
 
-export const Comment = ({ comment }) => {
+export const Comment = ({ comment, onDelete }) => {
   const [text, setText] = useState(comment.text);
   const { user } = useAuth();
   const isOwner = user && (user.id === comment.author.id);
@@ -23,6 +24,7 @@ export const Comment = ({ comment }) => {
       onSuccess={handleCommentUpdate} 
       defaultValue={text} 
       commentId={comment.id} />}
+      {isOwner && <IconButton onClick={() => onDelete(comment.id)}>Excluir</IconButton>}
     </div>
   );
 };

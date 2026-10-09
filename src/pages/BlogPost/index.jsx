@@ -19,6 +19,17 @@ export const BlogPost = () => {
     setComments([newComment, ...comments]);
   };
 
+  const handleDeleteComment = (commentId) => {
+    const isConfirmed = confirm(
+      "Tem certeza que deseja excluir este comentário?",
+    );
+    if (isConfirmed) {
+      apiHttp.delete(`comments/${commentId}`).then(() => {
+        setComments(oldState => oldState.filter((c) => c.id !== commentId));
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -63,7 +74,10 @@ export const BlogPost = () => {
               <p>{post.likes}</p>
             </div>
             <div className={styles.action}>
-              <DialogComment onSuccess={handleCommentSuccess} postId={post.id}/>
+              <DialogComment
+                onSuccess={handleCommentSuccess}
+                postId={post.id}
+              />
               <p>{comments.length}</p>
             </div>
           </div>
@@ -74,7 +88,7 @@ export const BlogPost = () => {
       <div className={styles.code}>
         <ReactMarkdown>{post.markdown}</ReactMarkdown>
       </div>
-      <CommentList comments={comments} />
+      <CommentList comments={comments} onDelete={handleDeleteComment} />
     </main>
   );
 };
